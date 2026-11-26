@@ -1,0 +1,665 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ito Agentics</title>
+<meta name="description" content="Ito Agentics builds trading agents from mathematics.">
+<meta name="theme-color" content="#000000">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23000'/%3E%3Ctext x='32' y='46' font-size='44' text-anchor='middle' fill='%23fff' font-family='Georgia,serif'%3E%E2%88%AB%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.47/dist/katex.min.css">
+<style>
+  :root {
+    --bg: #000;
+    --ink: #fff;
+    --g1: #d0d0d0;
+    --g2: #9a9a9a;
+    --g3: #6a6a6a;
+    --g4: #2c2c2c;
+    --g5: #151515;
+    --sans: "Space Grotesk", system-ui, sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { background: var(--bg); }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-weight: 300;
+    line-height: 1.5;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection { background: #fff; color: #000; }
+
+  #paths {
+    position: fixed; inset: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .grid-lines {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background-image:
+      linear-gradient(to right, rgba(255,255,255,.035) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255,255,255,.035) 1px, transparent 1px);
+    background-size: 80px 80px;
+    mask-image: radial-gradient(ellipse at 50% 40%, #000 20%, transparent 78%);
+    -webkit-mask-image: radial-gradient(ellipse at 50% 40%, #000 20%, transparent 78%);
+  }
+  main, footer { position: relative; z-index: 1; }
+
+  /* ---------- hero ---------- */
+  .hero {
+    min-height: 100svh;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 96px 0 72px;
+    position: relative;
+  }
+  .hero-inner { padding: 0 max(16px, 6vw); }
+  .eyebrow {
+    font-family: var(--mono); font-size: 12px; letter-spacing: .28em;
+    text-transform: uppercase; color: var(--g2);
+    display: flex; align-items: center; gap: 14px;
+  }
+  .eyebrow::before { content: ""; width: 44px; height: 1px; background: var(--g2); }
+  h1 {
+    font-weight: 300;
+    font-size: clamp(44px, 11.5vw, 190px);
+    line-height: .92;
+    letter-spacing: -.035em;
+    text-transform: uppercase;
+    margin: 28px 0 30px -.04em;
+  }
+  h1 span { color: var(--g3); }
+  .lede {
+    font-size: clamp(17px, 1.7vw, 24px);
+    color: var(--g1);
+    max-width: 30em;
+  }
+  .hero-formula {
+    margin-top: clamp(36px, 6vh, 72px);
+    padding: 26px 0 26px 26px;
+    border-left: 1px solid var(--ink);
+    font-size: clamp(13px, 1.75vw, 27px);
+    overflow: hidden;
+    display: flex; align-items: flex-start;
+  }
+  .hero-formula .katex-display { margin: 0; text-align: left; }
+  .hero-formula .katex-display > .katex { text-align: left; }
+  .hero-cap {
+    margin-top: 12px; padding-left: 27px;
+    font-family: var(--mono); font-size: 11px; letter-spacing: .2em;
+    text-transform: uppercase; color: var(--g2);
+  }
+
+  /* ---------- formula bands ---------- */
+  .band {
+    overflow: hidden; white-space: nowrap;
+    border-top: 1px solid var(--g5); border-bottom: 1px solid var(--g5);
+    padding: 20px 0;
+    mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
+  }
+  .band + .band { border-top: 0; }
+  .track { display: inline-flex; animation: slide 90s linear infinite; will-change: transform; }
+  .band.rev .track { animation-direction: reverse; animation-duration: 120s; }
+  .track > span { padding: 0 44px; color: var(--g2); font-size: 17px; }
+  .band.rev .track > span { color: var(--g3); font-size: 22px; }
+  @keyframes slide { to { transform: translateX(-50%); } }
+  .bands { margin-top: clamp(48px, 9vh, 110px); }
+
+  /* ---------- sections ---------- */
+  section.block { padding: clamp(64px, 11vh, 140px) max(16px, 6vw) 0; }
+  .head {
+    display: grid; grid-template-columns: auto 1fr; column-gap: 28px; align-items: baseline;
+    border-top: 1px solid var(--g4); padding-top: 22px; margin-bottom: 38px;
+  }
+  .num { font-family: var(--mono); font-size: 12px; letter-spacing: .2em; color: var(--g3); }
+  h2 {
+    font-weight: 300; font-size: clamp(27px, 3.6vw, 54px);
+    letter-spacing: -.02em; line-height: 1.05;
+  }
+  .head p { grid-column: 2; margin-top: 12px; color: var(--g2); max-width: 44em; font-size: 16px; }
+
+  .cards {
+    display: grid; gap: 1px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    background: var(--g4);
+    border: 1px solid var(--g4);
+  }
+  .card {
+    background: rgba(0,0,0,.84);
+    backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
+    padding: 22px 24px 26px;
+    min-width: 0;
+    display: flex; flex-direction: column;
+    position: relative;
+    transition: background .35s;
+  }
+  .card.wide { grid-column: 1 / -1; }
+  .card:hover { background: rgba(18,18,18,.92); }
+  .card::after {
+    content: ""; position: absolute; left: 0; top: 0; height: 1px; width: 0;
+    background: var(--ink); transition: width .5s ease;
+  }
+  .card:hover::after { width: 100%; }
+  .label {
+    font-family: var(--mono); font-size: 11px; letter-spacing: .2em;
+    text-transform: uppercase; color: var(--g2);
+  }
+  .tex {
+    flex: 1; display: flex; align-items: center;
+    padding: 22px 0 16px;
+    font-size: 15.5px;
+    overflow: hidden;
+    color: var(--ink);
+  }
+  .tex .katex-display { margin: 0 auto; }
+  .tex.lines { flex-direction: column; align-items: center; justify-content: center; gap: 12px; }
+  .hero-formula.lines { flex-direction: column; gap: 12px; }
+  .note { color: var(--g3); font-size: 14px; line-height: 1.45; }
+
+  .reveal { opacity: 0; transform: translateY(18px); transition: opacity .9s ease, transform .9s ease; }
+  .reveal.in { opacity: 1; transform: none; }
+
+  footer {
+    margin-top: clamp(80px, 14vh, 170px);
+    padding: 26px max(16px, 6vw) 44px;
+    border-top: 1px solid var(--g4);
+    display: flex; flex-wrap: wrap; gap: 12px 40px; justify-content: space-between;
+    font-family: var(--mono); font-size: 11px; letter-spacing: .2em;
+    text-transform: uppercase; color: var(--g3);
+  }
+
+  @media (max-width: 900px) {
+    .cards { grid-template-columns: minmax(0, 1fr); }
+  }
+  @media (max-width: 640px) {
+    .head { grid-template-columns: 1fr; }
+    .head p { grid-column: 1; }
+    .num { margin-bottom: 8px; }
+    .tex { font-size: 14px; }
+    .card { padding: 18px 16px 20px; }
+    .track > span { font-size: 14px; padding: 0 28px; }
+    .band.rev .track > span { font-size: 17px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .track { animation: none; }
+    .reveal { opacity: 1; transform: none; transition: none; }
+  }
+</style>
+</head>
+<body>
+<canvas id="paths" aria-hidden="true"></canvas>
+<div class="grid-lines" aria-hidden="true"></div>
+
+<main>
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="eyebrow">Stochastic calculus for trading agents</div>
+      <h1>Ito <span>Agentics</span></h1>
+      <p class="lede">We build trading agents from mathematics. Each agent runs one method. Each method is an equation.</p>
+      <div class="hero-formula tex-raw" data-display>
+        \mathrm{d}f(t,X_t)=\left(\frac{\partial f}{\partial t}+\mu_t\,\frac{\partial f}{\partial x}+\frac{1}{2}\,\sigma_t^{2}\,\frac{\partial^{2} f}{\partial x^{2}}\right)\mathrm{d}t\brk+\sigma_t\,\frac{\partial f}{\partial x}\,\mathrm{d}W_t
+      </div>
+      <div class="hero-cap">Itô's lemma, 1951</div>
+    </div>
+
+    <div class="bands" aria-hidden="true">
+      <div class="band"><div class="track" id="band1"></div></div>
+      <div class="band rev"><div class="track" id="band2"></div></div>
+    </div>
+  </header>
+
+  <section class="block">
+    <div class="head reveal">
+      <div class="num">01</div>
+      <h2>Stochastic calculus</h2>
+      <p>Prices move at random. Kiyosi Itô built the calculus for random motion: how to integrate against a path that is too rough to differentiate.</p>
+    </div>
+    <div class="cards reveal">
+      <article class="card">
+        <div class="label">Brownian motion</div>
+        <div class="tex">W_0=0,\qquad W_t-W_s\sim\mathcal{N}(0,\,t-s),\qquad W_t-W_s\ \perp\!\!\!\perp\ \mathcal{F}_s</div>
+        <p class="note">The model of pure noise. Each step is independent of the past and normally distributed.</p>
+      </article>
+      <article class="card">
+        <div class="label">Itô integral</div>
+        <div class="tex">\int_0^T H_t\,\mathrm{d}W_t=\lim_{\lVert\Pi\rVert\to 0}\ \sum_{i=0}^{n-1}H_{t_i}\left(W_{t_{i+1}}-W_{t_i}\right)</div>
+        <p class="note">The position H is chosen at the start of each step, before the move is known. That is what makes it a trading gain.</p>
+      </article>
+      <article class="card">
+        <div class="label">Quadratic variation</div>
+        <div class="tex">[W,W]_t=\lim_{\lVert\Pi\rVert\to 0}\sum_{i}\left(W_{t_{i+1}}-W_{t_i}\right)^{2}=t,\qquad (\mathrm{d}W_t)^{2}=\mathrm{d}t</div>
+        <p class="note">The squared steps of a Brownian path add up to elapsed time. Ordinary calculus has no such term.</p>
+      </article>
+      <article class="card">
+        <div class="label">Itô isometry</div>
+        <div class="tex">\mathbb{E}\!\left[\left(\int_0^T H_t\,\mathrm{d}W_t\right)^{2}\right]=\mathbb{E}\!\left[\int_0^T H_t^{2}\,\mathrm{d}t\right]</div>
+        <p class="note">The variance of a trading gain equals the expected sum of squared positions.</p>
+      </article>
+      <article class="card">
+        <div class="label">Geometric Brownian motion</div>
+        <div class="tex">\mathrm{d}S_t=\mu S_t\,\mathrm{d}t+\sigma S_t\,\mathrm{d}W_t\ \ \Longrightarrow\ \ S_t=S_0\exp\!\left(\left(\mu-\tfrac{1}{2}\sigma^{2}\right)t+\sigma W_t\right)</div>
+        <p class="note">The standard model of a stock price. The lines drawn behind this page are sample paths of it.</p>
+      </article>
+      <article class="card">
+        <div class="label">Stratonovich correction</div>
+        <div class="tex">\int_0^T X_t\circ\mathrm{d}W_t=\int_0^T X_t\,\mathrm{d}W_t+\frac{1}{2}\,[X,W]_T</div>
+        <p class="note">Two ways to define the integral. They differ by half the covariation.</p>
+      </article>
+      <article class="card wide">
+        <div class="label">Ornstein–Uhlenbeck process</div>
+        <div class="tex">\mathrm{d}X_t=\theta(\mu-X_t)\,\mathrm{d}t+\sigma\,\mathrm{d}W_t,\quad X_t=\mu+(X_0-\mu)e^{-\theta t}+\sigma\!\int_0^t e^{-\theta(t-s)}\,\mathrm{d}W_s</div>
+        <p class="note">Noise with a pull back toward a mean. The base model for mean reversion.</p>
+      </article>
+      <article class="card">
+        <div class="label">Time change (Dambis, Dubins–Schwarz)</div>
+        <div class="tex">M_t=B_{[M,M]_t}</div>
+        <p class="note">Every continuous martingale is a Brownian motion run on its own clock.</p>
+      </article>
+      <article class="card">
+        <div class="label">Euler–Maruyama scheme</div>
+        <div class="tex">X_{n+1}=X_n+\mu(X_n)\,\Delta t+\sigma(X_n)\sqrt{\Delta t}\;Z_n,\qquad Z_n\sim\mathcal{N}(0,1)</div>
+        <p class="note">How a computer simulates a stochastic differential equation, one step at a time.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="head reveal">
+      <div class="num">02</div>
+      <h2>Pricing and diffusion</h2>
+      <p>Random paths and partial differential equations describe the same thing from two sides. An expected value over paths solves an equation, and the reverse.</p>
+    </div>
+    <div class="cards reveal">
+      <article class="card">
+        <div class="label">Black–Scholes equation</div>
+        <div class="tex">\frac{\partial V}{\partial t}+\frac{1}{2}\sigma^{2}S^{2}\frac{\partial^{2}V}{\partial S^{2}}+rS\frac{\partial V}{\partial S}-rV=0</div>
+        <p class="note">The price V of an option on a stock S must satisfy this equation.</p>
+      </article>
+      <article class="card">
+        <div class="label">Black–Scholes formula</div>
+        <div class="tex">C=S_0\,\Phi(d_1)-Ke^{-rT}\,\Phi(d_2),\qquad d_{1,2}=\frac{\ln(S_0/K)+\left(r\pm\tfrac{1}{2}\sigma^{2}\right)T}{\sigma\sqrt{T}}</div>
+        <p class="note">Its solution for a call option with strike K and expiry T.</p>
+      </article>
+      <article class="card wide">
+        <div class="label">Feynman–Kac formula</div>
+        <div class="tex">u(t,x)=\mathbb{E}\!\left[\,e^{-\int_t^T r(X_s)\,\mathrm{d}s}\,g(X_T)\ \middle|\ X_t=x\right]\quad\Longleftrightarrow\quad\frac{\partial u}{\partial t}+\mu\frac{\partial u}{\partial x}+\frac{1}{2}\sigma^{2}\frac{\partial^{2}u}{\partial x^{2}}-ru=0,\quad u(T,x)=g(x)</div>
+        <p class="note">A discounted expected payoff over random paths is the solution of a differential equation.</p>
+      </article>
+      <article class="card">
+        <div class="label">Fokker–Planck equation</div>
+        <div class="tex">\frac{\partial p}{\partial t}=-\frac{\partial}{\partial x}\Big[\mu(x,t)\,p\Big]+\frac{1}{2}\frac{\partial^{2}}{\partial x^{2}}\Big[\sigma^{2}(x,t)\,p\Big]</div>
+        <p class="note">How the probability density p of a diffusing quantity changes over time.</p>
+      </article>
+      <article class="card">
+        <div class="label">Girsanov theorem</div>
+        <div class="tex">\left.\frac{\mathrm{d}\mathbb{Q}}{\mathrm{d}\mathbb{P}}\right|_{\mathcal{F}_T}=\exp\!\left(-\int_0^T\theta_s\,\mathrm{d}W_s-\frac{1}{2}\int_0^T\theta_s^{2}\,\mathrm{d}s\right),\quad \widetilde{W}_t=W_t+\int_0^t\theta_s\,\mathrm{d}s</div>
+        <p class="note">Reweighting the probabilities removes the drift. The shifted process is a Brownian motion under the new measure.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="head reveal">
+      <div class="num">03</div>
+      <h2>Optimization and control</h2>
+      <p>An agent chooses how much to hold at each moment. Control theory finds the choice that is best over the whole horizon.</p>
+    </div>
+    <div class="cards reveal">
+      <article class="card wide">
+        <div class="label">Hamilton–Jacobi–Bellman equation</div>
+        <div class="tex">0=\frac{\partial V}{\partial t}+\sup_{u}\left\{\,f(x,u)+\mu(x,u)\,\frac{\partial V}{\partial x}+\frac{1}{2}\,\sigma^{2}(x,u)\,\frac{\partial^{2}V}{\partial x^{2}}\right\},\qquad V(T,x)=g(x)</div>
+        <p class="note">V is the best total reward reachable from state x at time t. The control u that attains the supremum is the optimal action.</p>
+      </article>
+      <article class="card">
+        <div class="label">Merton fraction</div>
+        <div class="tex">\pi^{*}=\frac{\mu-r}{\gamma\,\sigma^{2}}</div>
+        <p class="note">The share of wealth to hold in a risky asset, for an investor with risk aversion γ.</p>
+      </article>
+      <article class="card">
+        <div class="label">Kelly criterion</div>
+        <div class="tex">f^{*}=\underset{f}{\arg\max}\ \mathbb{E}\big[\log(1+fR)\big]</div>
+        <p class="note">The bet size that grows wealth fastest over many repeated bets with return R.</p>
+      </article>
+      <article class="card">
+        <div class="label">Mean–variance portfolio</div>
+        <div class="tex">\max_{w}\ \ w^{\top}(\mu-r\mathbf{1})-\frac{\gamma}{2}\,w^{\top}\Sigma\,w\ \ \Longrightarrow\ \ w^{*}=\frac{1}{\gamma}\,\Sigma^{-1}(\mu-r\mathbf{1})</div>
+        <p class="note">Weights w that trade expected return against variance, given the covariance matrix Σ.</p>
+      </article>
+      <article class="card">
+        <div class="label">Kalman filter</div>
+        <div class="tex">K_t=P_{t|t-1}H^{\top}\!\left(HP_{t|t-1}H^{\top}+R\right)^{-1},\quad \hat{x}_{t|t}=\hat{x}_{t|t-1}+K_t\left(y_t-H\hat{x}_{t|t-1}\right)</div>
+        <p class="note">Updates an estimate of a hidden state each time a noisy measurement y arrives.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="head reveal">
+      <div class="num">04</div>
+      <h2>Path signatures</h2>
+      <p>The signature turns a whole price path into a list of numbers: its iterated integrals. Those numbers describe the shape of the path and the order in which things happened.</p>
+    </div>
+    <div class="cards reveal">
+      <article class="card wide">
+        <div class="label">Signature of a path</div>
+        <div class="tex">S(X)_{s,t}=\bigg(1,\ \int_{s}^{t}\mathrm{d}X_{u},\quad \int_{s\lt u_1\lt u_2\lt t}\mathrm{d}X_{u_1}\otimes\mathrm{d}X_{u_2},\quad \ldots,\ \int_{s\lt u_1\lt\cdots\lt u_k\lt t}\mathrm{d}X_{u_1}\otimes\cdots\otimes\mathrm{d}X_{u_k},\ \ \ldots\bigg)</div>
+        <p class="note">Level one is the total move. Level two holds the areas swept out. Each further level adds finer detail.</p>
+      </article>
+      <article class="card">
+        <div class="label">Chen's identity</div>
+        <div class="tex">S(X)_{s,u}\otimes S(X)_{u,t}=S(X)_{s,t}</div>
+        <p class="note">Joining two pieces of a path multiplies their signatures.</p>
+      </article>
+      <article class="card">
+        <div class="label">Shuffle product</div>
+        <div class="tex">\big\langle S(X),\,e_I\big\rangle\,\big\langle S(X),\,e_J\big\rangle=\big\langle S(X),\ e_I\,\sqcup\!\sqcup\,e_J\big\rangle</div>
+        <p class="note">A product of two signature terms is a sum of signature terms. Linear models on signatures can therefore fit nonlinear functions of the path.</p>
+      </article>
+      <article class="card wide">
+        <div class="label">Lévy area</div>
+        <div class="tex">A_{s,t}=\frac{1}{2}\int_s^t\left(X^{1}_u-X^{1}_s\right)\mathrm{d}X^{2}_u-\left(X^{2}_u-X^{2}_s\right)\mathrm{d}X^{1}_u</div>
+        <p class="note">The signed area between a two-dimensional path and its chord. It records which coordinate moved first.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="head reveal">
+      <div class="num">05</div>
+      <h2>Random matrix theory</h2>
+      <p>A correlation matrix measured from limited data is mostly noise. Random matrix theory says exactly what pure noise looks like, so the signal can be told apart from it.</p>
+    </div>
+    <div class="cards reveal">
+      <article class="card wide">
+        <div class="label">Marchenko–Pastur law</div>
+        <div class="tex">\rho(\lambda)=\frac{\sqrt{(\lambda_{+}-\lambda)(\lambda-\lambda_{-})}}{2\pi\,q\,\sigma^{2}\lambda},\qquad \lambda_{\pm}=\sigma^{2}\left(1\pm\sqrt{q}\right)^{2},\quad q=\frac{N}{T}</div>
+        <p class="note">The eigenvalue density of a covariance matrix of N unrelated series over T observations. Eigenvalues above the upper edge carry information.</p>
+      </article>
+      <article class="card">
+        <div class="label">Wigner semicircle law</div>
+        <div class="tex">\rho(x)=\frac{1}{2\pi\sigma^{2}}\sqrt{4\sigma^{2}-x^{2}},\qquad |x|\le 2\sigma</div>
+        <p class="note">The eigenvalue density of a large symmetric matrix with random entries.</p>
+      </article>
+      <article class="card">
+        <div class="label">Stieltjes transform</div>
+        <div class="tex">G(z)=\int\frac{\rho(\lambda)}{z-\lambda}\,\mathrm{d}\lambda,\qquad \rho(\lambda)=\frac{1}{\pi}\lim_{\varepsilon\to 0^{+}}\operatorname{Im}\,G(\lambda-i\varepsilon)</div>
+        <p class="note">The tool that turns a question about eigenvalues into an algebraic equation.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="head reveal">
+      <div class="num">06</div>
+      <h2>Topology</h2>
+      <p>Topological data analysis measures the shape of data: clusters, loops and voids, and how long each one survives as the scale changes.</p>
+    </div>
+    <div class="cards reveal">
+      <article class="card wide">
+        <div class="label">Homology</div>
+        <div class="tex">\partial_{k}\circ\partial_{k+1}=0,\qquad H_k=\ker\partial_k\,\big/\,\operatorname{im}\partial_{k+1},\qquad \beta_k=\operatorname{rank}H_k</div>
+        <p class="note">The boundary of a boundary is empty. The Betti number β counts the holes of dimension k.</p>
+      </article>
+      <article class="card">
+        <div class="label">Vietoris–Rips complex</div>
+        <div class="tex">\mathrm{VR}_{\varepsilon}(X)=\big\{\,\sigma\subseteq X\ :\ d(x,y)\le\varepsilon\ \ \text{for all }x,y\in\sigma\,\big\}</div>
+        <p class="note">Joins every group of data points that lie within distance ε of each other.</p>
+      </article>
+      <article class="card">
+        <div class="label">Persistent homology</div>
+        <div class="tex">H_k^{\,i,j}=\operatorname{im}\!\Big(H_k(K_i)\longrightarrow H_k(K_j)\Big),\qquad i\le j</div>
+        <p class="note">The holes present at scale i that still exist at scale j.</p>
+      </article>
+      <article class="card">
+        <div class="label">Stability theorem</div>
+        <div class="tex">d_B\big(\mathrm{Dgm}(f),\,\mathrm{Dgm}(g)\big)\le\lVert f-g\rVert_{\infty}</div>
+        <p class="note">A small change in the data moves the persistence diagram by at most as much.</p>
+      </article>
+      <article class="card">
+        <div class="label">Euler characteristic</div>
+        <div class="tex">\chi=\sum_{k\ge 0}(-1)^{k}\beta_k</div>
+        <p class="note">One number that summarises the holes of every dimension.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="head reveal">
+      <div class="num">07</div>
+      <h2>Time series</h2>
+      <p>The statistics of data that arrives in order, one bar at a time.</p>
+    </div>
+    <div class="cards reveal">
+      <article class="card">
+        <div class="label">Moving average crossover</div>
+        <div class="tex">\mathrm{SMA}_n(t)=\frac{1}{n}\sum_{i=0}^{n-1}P_{t-i},\qquad e_t=\mathbf{1}\big\{\mathrm{SMA}_{\text{fast}}(t)\gt\mathrm{SMA}_{\text{slow}}(t)\big\}</div>
+        <p class="note">Hold the asset while the short average of price P sits above the long one.</p>
+      </article>
+      <article class="card">
+        <div class="label">GARCH(1,1)</div>
+        <div class="tex">\sigma_t^{2}=\omega+\alpha\,\varepsilon_{t-1}^{2}+\beta\,\sigma_{t-1}^{2}</div>
+        <p class="note">Volatility clusters. A large move yesterday raises the expected variance today.</p>
+      </article>
+      <article class="card">
+        <div class="label">Autoregression</div>
+        <div class="tex">X_t=c+\sum_{i=1}^{p}\varphi_i\,X_{t-i}+\varepsilon_t</div>
+        <p class="note">Today's value as a weighted sum of the last p values plus noise.</p>
+      </article>
+      <article class="card">
+        <div class="label">Sharpe ratio</div>
+        <div class="tex">\mathrm{SR}=\frac{\mathbb{E}[R]-r_f}{\sqrt{\operatorname{Var}(R)}}</div>
+        <p class="note">Return earned above the risk-free rate, per unit of risk taken.</p>
+      </article>
+      <article class="card">
+        <div class="label">Bayes' rule</div>
+        <div class="tex">p(\theta\mid x)=\frac{p(x\mid\theta)\,p(\theta)}{\int p(x\mid\theta')\,p(\theta')\,\mathrm{d}\theta'}</div>
+        <p class="note">How evidence x updates belief about an unknown θ.</p>
+      </article>
+      <article class="card">
+        <div class="label">Maximum drawdown</div>
+        <div class="tex">\mathrm{MDD}=\max_{t\in[0,T]}\left(\frac{\max_{s\le t}V_s-V_t}{\max_{s\le t}V_s}\right)</div>
+        <p class="note">The largest fall of account value V from a previous peak.</p>
+      </article>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <span>Ito Agentics</span>
+  <span>dS = μS dt + σS dW</span>
+  <span>© 2026</span>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.47/dist/katex.min.js"></script>
+<script>
+(function () {
+  // ---- typeset every formula ----
+  function tex(el, src, display) {
+    try { katex.render(src.trim(), el, { displayMode: display, throwOnError: false, strict: "ignore" }); }
+    catch (e) { el.textContent = src; }
+  }
+  // Each formula is first set on one line. If that is wider than its box
+  // (a phone screen), it is broken into lines at \qquad, \quad, the arrows and
+  // the \brk marker, and then shrunk only if a line is still too wide.
+  var formulas = [];
+  document.querySelectorAll(".tex, .tex-raw").forEach(function (el) {
+    formulas.push({ el: el, src: el.textContent.trim() });
+  });
+  var BREAK = /\\qquad|\\quad|\\brk|(?=\\Longrightarrow)|(?=\\Longleftrightarrow)/;
+  function widest(el) {
+    var w = 0;
+    el.querySelectorAll(".katex").forEach(function (k) { w = Math.max(w, k.getBoundingClientRect().width); });
+    return w;
+  }
+  function fit() {
+    formulas.forEach(function (f) {
+      var el = f.el;
+      el.style.fontSize = "";
+      el.classList.remove("lines");
+      tex(el, f.src.replace(/\\brk/g, ""), true);
+      if (widest(el) <= el.clientWidth) return;
+      var parts = f.src.split(BREAK).map(function (x) { return x.trim().replace(/(\\ ?)+$/, ""); }).filter(Boolean);
+      if (parts.length > 1) {
+        el.textContent = "";
+        el.classList.add("lines");
+        parts.forEach(function (part) {
+          var line = document.createElement("div");
+          tex(line, part, true);
+          el.appendChild(line);
+        });
+      }
+      var need = widest(el), have = el.clientWidth;
+      if (need > have) {
+        var base = parseFloat(getComputedStyle(el).fontSize);
+        el.style.fontSize = (base * have / need * 0.985) + "px";
+      }
+    });
+  }
+  fit();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
+  window.addEventListener("load", fit);
+
+  // ---- scrolling bands of formulas ----
+  var band1 = [
+    "\\mathrm{d}S_t=\\mu S_t\\,\\mathrm{d}t+\\sigma S_t\\,\\mathrm{d}W_t",
+    "(\\mathrm{d}W_t)^2=\\mathrm{d}t",
+    "\\mathbb{E}\\big[W_tW_s\\big]=\\min(s,t)",
+    "\\int_0^t W_s\\,\\mathrm{d}W_s=\\tfrac12W_t^2-\\tfrac12t",
+    "\\mathbb{E}\\big[e^{\\sigma W_t}\\big]=e^{\\sigma^2t/2}",
+    "p(x,t)=\\frac{1}{\\sqrt{2\\pi t}}\\,e^{-x^2/2t}",
+    "\\frac{\\partial p}{\\partial t}=\\frac12\\frac{\\partial^2p}{\\partial x^2}",
+    "M_t=\\mathbb{E}\\big[M_T\\mid\\mathcal{F}_t\\big]",
+    "\\limsup_{t\\to\\infty}\\frac{W_t}{\\sqrt{2t\\log\\log t}}=1",
+    "\\mathcal{E}(X)_t=\\exp\\!\\big(X_t-\\tfrac12[X,X]_t\\big)",
+    "\\mathrm{d}(XY)=X\\,\\mathrm{d}Y+Y\\,\\mathrm{d}X+\\mathrm{d}[X,Y]",
+    "\\Phi(x)=\\frac{1}{\\sqrt{2\\pi}}\\int_{-\\infty}^{x}e^{-u^2/2}\\,\\mathrm{d}u"
+  ];
+  var band2 = [
+    "\\partial_k\\circ\\partial_{k+1}=0",
+    "S(X)_{s,u}\\otimes S(X)_{u,t}=S(X)_{s,t}",
+    "\\lambda_\\pm=\\sigma^2(1\\pm\\sqrt q)^2",
+    "\\pi^*=\\frac{\\mu-r}{\\gamma\\sigma^2}",
+    "w^*=\\tfrac1\\gamma\\Sigma^{-1}(\\mu-r\\mathbf 1)",
+    "\\chi=\\sum_k(-1)^k\\beta_k",
+    "\\sigma_t^2=\\omega+\\alpha\\varepsilon_{t-1}^2+\\beta\\sigma_{t-1}^2",
+    "\\Delta=\\frac{\\partial V}{\\partial S}=\\Phi(d_1)",
+    "\\mathcal{L}f=\\mu\\,\\partial_xf+\\tfrac12\\sigma^2\\,\\partial_{xx}f",
+    "\\hat\\beta=(X^\\top X)^{-1}X^\\top y",
+    "H(p)=-\\sum_ip_i\\log p_i"
+  ];
+  function fill(id, list) {
+    var track = document.getElementById(id);
+    for (var pass = 0; pass < 2; pass++) {
+      list.forEach(function (src) {
+        var s = document.createElement("span");
+        tex(s, src, false);
+        track.appendChild(s);
+      });
+    }
+  }
+  fill("band1", band1);
+  fill("band2", band2);
+
+  // ---- reveal on scroll ----
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } });
+  }, { threshold: 0.06 });
+  document.querySelectorAll(".reveal").forEach(function (el) { io.observe(el); });
+
+  // ---- background: live sample paths of geometric Brownian motion ----
+  // Each path follows dS = mu S dt + sigma S dW, advanced with the
+  // Euler-Maruyama step on log S:  log S += (mu - sigma^2/2) dt + sigma sqrt(dt) Z.
+  var cv = document.getElementById("paths"), ctx = cv.getContext("2d");
+  var W = 0, H = 0, dpr = 1, paths = [];
+  var still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var STEP = 2.2;       // pixels moved right per time step
+  var COUNT = 9;
+
+  function gauss() {    // Box-Muller: two uniform numbers in, one standard normal out
+    var u = 1 - Math.random(), v = Math.random();
+    return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
+  }
+  function spawn(delay) {
+    return {
+      pts: [], x: 0, logS: 0,
+      y0: H * (0.25 + 0.5 * Math.random()),
+      mu: (Math.random() - 0.5) * 0.5,
+      sigma: 0.22 + Math.random() * 0.5,
+      shade: 150 + Math.floor(Math.random() * 105),
+      width: Math.random() < 0.25 ? 1.3 : 0.7,
+      speed: 1 + Math.floor(Math.random() * 3),
+      wait: delay, fade: 1, done: false
+    };
+  }
+  function advance(p) {
+    var dt = 1 / 900;
+    p.logS += (p.mu - 0.5 * p.sigma * p.sigma) * dt + p.sigma * Math.sqrt(dt) * gauss();
+    p.x += STEP;
+    p.pts.push(p.x, p.y0 - (Math.exp(p.logS) - 1) * H * 0.9);
+    if (p.x > W + 4) p.done = true;
+  }
+  function resize() {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = window.innerWidth; H = window.innerHeight;
+    cv.width = W * dpr; cv.height = H * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    paths = [];
+    for (var i = 0; i < COUNT; i++) {
+      var p = spawn(0);
+      // start with paths already part way across, so the screen is never empty
+      var target = still ? Infinity : W * (0.15 + 0.8 * Math.random());
+      while (!p.done && p.x < target) advance(p);
+      paths.push(p);
+    }
+    if (still) draw();
+  }
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    for (var i = 0; i < paths.length; i++) {
+      var p = paths[i], n = p.pts.length;
+      if (n < 4) continue;
+      ctx.beginPath();
+      ctx.moveTo(p.pts[0], p.pts[1]);
+      for (var k = 2; k < n; k += 2) ctx.lineTo(p.pts[k], p.pts[k + 1]);
+      ctx.strokeStyle = "rgba(" + p.shade + "," + p.shade + "," + p.shade + "," + (0.36 * p.fade) + ")";
+      ctx.lineWidth = p.width;
+      ctx.stroke();
+      if (!p.done) {
+        ctx.beginPath();
+        ctx.arc(p.pts[n - 2], p.pts[n - 1], 1.8, 0, 6.2832);
+        ctx.fillStyle = "#fff";
+        ctx.fill();
+      }
+    }
+  }
+  function frame() {
+    for (var i = 0; i < paths.length; i++) {
+      var p = paths[i];
+      if (p.wait > 0) { p.wait--; continue; }
+      if (!p.done) { for (var s = 0; s < p.speed && !p.done; s++) advance(p); }
+      else { p.fade -= 0.006; if (p.fade <= 0) paths[i] = spawn(20 + Math.random() * 60); }
+    }
+    draw();
+    requestAnimationFrame(frame);
+  }
+  var lastW = 0;
+  window.addEventListener("resize", function () {
+    // phones fire resize when the address bar hides; only rebuild on a width change
+    if (window.innerWidth !== lastW) { lastW = window.innerWidth; resize(); fit(); }
+    else { H = window.innerHeight; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); }
+  });
+  lastW = window.innerWidth;
+  resize();
+  if (!still) requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
