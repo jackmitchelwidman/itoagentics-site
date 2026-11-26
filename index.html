@@ -53,6 +53,16 @@
   }
   main, footer { position: relative; z-index: 1; }
 
+  /* ---------- links ---------- */
+  .top {
+    position: absolute; top: 30px; right: max(16px, 6vw); z-index: 2;
+    font-family: var(--mono); font-size: 12px; letter-spacing: .28em;
+    text-transform: uppercase;
+  }
+  .top a, footer a { color: var(--g2); text-decoration: none; transition: color .25s; }
+  .top a:hover, footer a:hover { color: var(--ink); }
+  footer a { margin-left: 34px; }
+
   /* ---------- hero ---------- */
   .hero {
     min-height: 100svh;
@@ -218,6 +228,7 @@
 
 <main>
   <header class="hero">
+    <nav class="top"><a href="founder.html">Founder</a></nav>
     <div class="hero-inner">
       <div class="eyebrow">Penetrating the secrets of stochastic complexity</div>
       <h1>Ito <span>Agentics</span></h1>
@@ -306,7 +317,7 @@
 </main>
 
 <footer>
-  <span>Ito Agentics</span>
+  <span>Ito Agentics<a href="founder.html">Founder</a></span>
   <span style="text-transform:none;letter-spacing:.12em">dS = μS dt + σS dW</span>
   <span>© 2026</span>
 </footer>

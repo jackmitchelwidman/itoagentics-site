@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Founder · Ito Agentics</title>
+<meta name="description" content="Jack Widman, Ph.D., founder of Ito Agentics. Mathematician: set theory, topology, type theory, sheaf theory.">
+<meta name="theme-color" content="#000000">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23000'/%3E%3Ctext x='32' y='46' font-size='44' text-anchor='middle' fill='%23fff' font-family='Georgia,serif'%3E%E2%88%AB%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.47/dist/katex.min.css">
+<style>
+  :root {
+    --bg: #000;
+    --ink: #fff;
+    --g1: #d0d0d0;
+    --g2: #9a9a9a;
+    --g3: #6a6a6a;
+    --g4: #2c2c2c;
+    --g5: #151515;
+    --sans: "Space Grotesk", system-ui, sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { background: var(--bg); }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-weight: 300;
+    line-height: 1.5;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection { background: #fff; color: #000; }
+  a { color: inherit; }
+
+  .grid-lines {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background-image:
+      linear-gradient(to right, rgba(255,255,255,.035) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255,255,255,.035) 1px, transparent 1px);
+    background-size: 80px 80px;
+    mask-image: radial-gradient(ellipse at 50% 40%, #000 20%, transparent 78%);
+    -webkit-mask-image: radial-gradient(ellipse at 50% 40%, #000 20%, transparent 78%);
+  }
+  main, footer { position: relative; z-index: 1; }
+  main { padding: 0 max(16px, 6vw); }
+
+  .mono {
+    font-family: var(--mono); font-size: 12px; letter-spacing: .2em;
+    text-transform: uppercase; color: var(--g2);
+  }
+  .mono a { text-decoration: none; transition: color .25s; }
+  .mono a:hover { color: var(--ink); }
+
+  .top { padding: 30px 0 0; }
+
+  .who {
+    display: grid; grid-template-columns: minmax(0, 300px) minmax(0, 1fr);
+    gap: clamp(28px, 5vw, 72px);
+    align-items: start;
+    padding: clamp(40px, 8vh, 96px) 0 0;
+  }
+  .photo {
+    display: block; width: 100%; height: auto; aspect-ratio: 1;
+    border: 1px solid var(--g4);
+    filter: grayscale(1);
+  }
+  .eyebrow {
+    font-family: var(--mono); font-size: 12px; letter-spacing: .28em;
+    text-transform: uppercase; color: var(--g2);
+    display: flex; align-items: center; gap: 14px;
+  }
+  .eyebrow::before { content: ""; width: 44px; height: 1px; background: var(--g2); }
+  h1 {
+    font-weight: 300;
+    font-size: clamp(38px, 6.4vw, 96px);
+    line-height: .95;
+    letter-spacing: -.03em;
+    text-transform: uppercase;
+    margin: 24px 0 22px -.03em;
+  }
+  h1 span { color: var(--g3); }
+  .lede { font-size: clamp(17px, 1.7vw, 24px); color: var(--g1); }
+  .bio { margin-top: 34px; max-width: 40em; }
+  .bio p { color: var(--g1); font-size: 17px; line-height: 1.6; }
+  .bio p + p { margin-top: 18px; }
+  .bio em { font-style: italic; color: var(--ink); }
+
+  .facts {
+    list-style: none; margin-top: 36px; padding-top: 22px;
+    border-top: 1px solid var(--g4);
+    display: grid; gap: 10px; max-width: 40em;
+    font-size: 11px; line-height: 1.7;
+  }
+  .links { margin-top: 26px; display: flex; flex-wrap: wrap; gap: 12px 34px; font-size: 11px; }
+  .links a { color: var(--ink); border-bottom: 1px solid var(--g3); padding-bottom: 3px; }
+  .links a:hover { border-bottom-color: var(--ink); }
+
+  /* ---------- formula cards ---------- */
+  .block { padding: clamp(64px, 11vh, 140px) 0 0; }
+  .head {
+    display: grid; grid-template-columns: auto 1fr; column-gap: 28px; align-items: baseline;
+    border-top: 1px solid var(--g4); padding-top: 22px; margin-bottom: 38px;
+  }
+  .num { font-family: var(--mono); font-size: 12px; letter-spacing: .2em; color: var(--g3); text-transform: uppercase; }
+  h2 {
+    font-weight: 300; font-size: clamp(27px, 3.6vw, 54px);
+    letter-spacing: -.02em; line-height: 1.05;
+  }
+  .head p { grid-column: 2; margin-top: 12px; color: var(--g2); max-width: 44em; font-size: 16px; }
+  .cards {
+    display: grid; gap: 1px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    background: var(--g4);
+    border: 1px solid var(--g4);
+  }
+  .card {
+    background: rgba(0,0,0,.84);
+    padding: 22px 24px 26px;
+    min-width: 0;
+    display: flex; flex-direction: column;
+    position: relative;
+    transition: background .35s;
+  }
+  .card:hover { background: rgba(18,18,18,.92); }
+  .card::after {
+    content: ""; position: absolute; left: 0; top: 0; height: 1px; width: 0;
+    background: var(--ink); transition: width .5s ease;
+  }
+  .card:hover::after { width: 100%; }
+  .label {
+    font-family: var(--mono); font-size: 11px; letter-spacing: .2em;
+    text-transform: uppercase; color: var(--g2);
+  }
+  .tex {
+    flex: 1; display: flex; align-items: center; justify-content: center;
+    padding: 30px 0 24px;
+    font-size: 21px;
+    overflow: hidden;
+    color: var(--ink);
+  }
+  .tex .katex-display { margin: 0 auto; }
+  .note { color: #858585; font-size: 14px; line-height: 1.45; }
+
+  footer {
+    margin-top: clamp(80px, 14vh, 170px);
+    padding: 26px max(16px, 6vw) 44px;
+    border-top: 1px solid var(--g4);
+    display: flex; flex-wrap: wrap; gap: 12px 40px; justify-content: space-between;
+    font-family: var(--mono); font-size: 11px; letter-spacing: .2em;
+    text-transform: uppercase; color: var(--g3);
+  }
+  footer a { text-decoration: none; transition: color .25s; }
+  footer a:hover { color: var(--ink); }
+
+  @media (max-width: 900px) {
+    .cards { grid-template-columns: minmax(0, 1fr); }
+  }
+  @media (max-width: 760px) {
+    .who { grid-template-columns: minmax(0, 1fr); }
+    .photo { max-width: 240px; }
+  }
+  @media (max-width: 640px) {
+    .head { grid-template-columns: 1fr; }
+    .head p { grid-column: 1; }
+    .num { margin-bottom: 8px; }
+    .tex { font-size: 17px; }
+    .card { padding: 18px 16px 20px; }
+    .bio p { font-size: 16px; }
+  }
+</style>
+</head>
+<body>
+<div class="grid-lines" aria-hidden="true"></div>
+
+<main>
+  <nav class="top mono"><a href="./">← Ito Agentics</a></nav>
+
+  <section class="who">
+    <img class="photo" src="founder.jpg" alt="Jack Widman" width="640" height="640">
+    <div>
+      <div class="eyebrow">Founder</div>
+      <h1>Jack Widman<span>, Ph.D.</span></h1>
+      <p class="lede">Mathematician. Ph.D. in mathematics, Wesleyan University, 1998.</p>
+
+      <div class="bio">
+        <p>Jack's first love in mathematics is set theory: Cantor's theory of the infinite, the axioms of ZFC, and the large cardinals beyond them. He wrote his doctoral dissertation, <em>Groups and Algebras: Convergence and Order</em>, in set-theoretic topology under W. W. Comfort.</p>
+        <p>He is an affiliated researcher in the foundations of computer science at Ben-Gurion University of the Negev. His work there is in type theory: he formalizes an equational theory of ∞-categories in Rocq, a proof assistant that checks every step of a proof by machine.</p>
+        <p>In 2026 he published a way to measure whether several AI models agree, built on sheaf cohomology. He proved the theorems behind it in the Lean 4 proof assistant and published the proof files.</p>
+        <p>He has built production software for 27 years, including trading and risk systems at Morgan Stanley, Credit Suisse, Bank of America and Royal Bank of Scotland. He is the author of <em>Learning Functional Programming</em> (O'Reilly, 2022) and was Visiting Professor of Computer Science at Wesleyan in 2025.</p>
+        <p>At Ito Agentics he looks for trading methods in stochastic analysis, random matrix theory and topology.</p>
+      </div>
+
+      <ul class="facts mono">
+        <li>Ph.D. Mathematics, Wesleyan University, 1998</li>
+        <li>B.A. Latin and Ancient Greek, City University of New York</li>
+        <li>US Patent 8,521,743</li>
+      </ul>
+
+      <div class="links mono">
+        <a href="https://www.linkedin.com/in/jackwidman" rel="noopener">LinkedIn</a>
+        <a href="https://doi.org/10.5281/zenodo.20945474" rel="noopener">Sheaf paper, 2026</a>
+        <a href="https://www.oreilly.com/library/view/learning-functional-programming/9781098111748/" rel="noopener">Book, O'Reilly 2022</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="head">
+      <div class="num">Mathematics</div>
+      <h2>Four fields, one statement each</h2>
+      <p>The areas Jack has worked in, each with one result from it.</p>
+    </div>
+    <div class="cards">
+      <div class="card">
+        <div class="label">01 &nbsp; Set theory</div>
+        <div class="tex">\lvert X\rvert<\lvert\mathcal{P}(X)\rvert</div>
+        <p class="note">Cantor's theorem. Every set has more subsets than elements, so there is no largest infinity.</p>
+      </div>
+      <div class="card">
+        <div class="label">02 &nbsp; Finite topology</div>
+        <div class="tex">x\le y\iff x\in\overline{\{y\}}</div>
+        <p class="note">A topology on a finite set is the same thing as an ordering of its points: x sits below y when x lies in the closure of y.</p>
+      </div>
+      <div class="card">
+        <div class="label">03 &nbsp; Type theory</div>
+        <div class="tex">(A=B)\simeq(A\simeq B)</div>
+        <p class="note">Univalence. Two types that are equivalent are equal.</p>
+      </div>
+      <div class="card">
+        <div class="label">04 &nbsp; Sheaf theory</div>
+        <div class="tex">\ker L_{\mathcal F}=H^{0}(X;\mathcal F)</div>
+        <p class="note">The kernel of the sheaf Laplacian is the space of global sections: the answers that agree everywhere. Proved in Lean 4.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <span><a href="./">Ito Agentics</a></span>
+  <span style="text-transform:none;letter-spacing:.12em">dS = μS dt + σS dW</span>
+  <span>© 2026</span>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/katex@0.16.47/dist/katex.min.js"></script>
+<script>
+(function () {
+  // Typeset each formula. If one is wider than its card, shrink it to fit.
+  document.querySelectorAll(".tex").forEach(function (el) {
+    var src = el.textContent.trim();
+    try { katex.render(src, el, { displayMode: true, throwOnError: false, strict: "ignore" }); }
+    catch (e) { el.textContent = src; return; }
+    var k = el.querySelector(".katex");
+    var need = k ? k.getBoundingClientRect().width : 0, have = el.clientWidth;
+    if (need > have) el.style.fontSize = (parseFloat(getComputedStyle(el).fontSize) * have / need * 0.985) + "px";
+  });
+})();
+</script>
+</body>
+</html>
