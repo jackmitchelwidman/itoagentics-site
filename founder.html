@@ -10,7 +10,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500&family=JetBrains+Mono:wght@300;400&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.47/dist/katex.min.css">
 <style>
   :root {
     --bg: #000;
@@ -99,53 +98,6 @@
   .links { margin-top: 26px; display: flex; flex-wrap: wrap; gap: 12px 34px; font-size: 11px; }
   .links a { color: var(--ink); border-bottom: 1px solid var(--g3); padding-bottom: 3px; }
   .links a:hover { border-bottom-color: var(--ink); }
-
-  /* ---------- formula cards ---------- */
-  .block { padding: clamp(64px, 11vh, 140px) 0 0; }
-  .head {
-    display: grid; grid-template-columns: auto 1fr; column-gap: 28px; align-items: baseline;
-    border-top: 1px solid var(--g4); padding-top: 22px; margin-bottom: 38px;
-  }
-  .num { font-family: var(--mono); font-size: 12px; letter-spacing: .2em; color: var(--g3); text-transform: uppercase; }
-  h2 {
-    font-weight: 300; font-size: clamp(27px, 3.6vw, 54px);
-    letter-spacing: -.02em; line-height: 1.05;
-  }
-  .head p { grid-column: 2; margin-top: 12px; color: var(--g2); max-width: 44em; font-size: 16px; }
-  .cards {
-    display: grid; gap: 1px;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    background: var(--g4);
-    border: 1px solid var(--g4);
-  }
-  .card {
-    background: rgba(0,0,0,.84);
-    padding: 22px 24px 26px;
-    min-width: 0;
-    display: flex; flex-direction: column;
-    position: relative;
-    transition: background .35s;
-  }
-  .card:hover { background: rgba(18,18,18,.92); }
-  .card::after {
-    content: ""; position: absolute; left: 0; top: 0; height: 1px; width: 0;
-    background: var(--ink); transition: width .5s ease;
-  }
-  .card:hover::after { width: 100%; }
-  .label {
-    font-family: var(--mono); font-size: 11px; letter-spacing: .2em;
-    text-transform: uppercase; color: var(--g2);
-  }
-  .tex {
-    flex: 1; display: flex; align-items: center; justify-content: center;
-    padding: 30px 0 24px;
-    font-size: 21px;
-    overflow: hidden;
-    color: var(--ink);
-  }
-  .tex .katex-display { margin: 0 auto; }
-  .note { color: #858585; font-size: 14px; line-height: 1.45; }
-
   footer {
     margin-top: clamp(80px, 14vh, 170px);
     padding: 26px max(16px, 6vw) 44px;
@@ -157,19 +109,11 @@
   footer a { text-decoration: none; transition: color .25s; }
   footer a:hover { color: var(--ink); }
 
-  @media (max-width: 900px) {
-    .cards { grid-template-columns: minmax(0, 1fr); }
-  }
   @media (max-width: 760px) {
     .who { grid-template-columns: minmax(0, 1fr); }
     .photo { max-width: 240px; }
   }
   @media (max-width: 640px) {
-    .head { grid-template-columns: 1fr; }
-    .head p { grid-column: 1; }
-    .num { margin-bottom: 8px; }
-    .tex { font-size: 17px; }
-    .card { padding: 18px 16px 20px; }
     .bio p { font-size: 16px; }
   }
 </style>
@@ -209,36 +153,6 @@
       </div>
     </div>
   </section>
-
-  <section class="block">
-    <div class="head">
-      <div class="num">Mathematics</div>
-      <h2>Four fields, one statement each</h2>
-      <p>The areas Jack has worked in, each with one result from it.</p>
-    </div>
-    <div class="cards">
-      <div class="card">
-        <div class="label">01 &nbsp; Set theory</div>
-        <div class="tex">\lvert X\rvert<\lvert\mathcal{P}(X)\rvert</div>
-        <p class="note">Cantor's theorem. Every set has more subsets than elements, so there is no largest infinity.</p>
-      </div>
-      <div class="card">
-        <div class="label">02 &nbsp; Finite topology</div>
-        <div class="tex">x\le y\iff x\in\overline{\{y\}}</div>
-        <p class="note">A topology on a finite set is the same thing as an ordering of its points: x sits below y when x lies in the closure of y.</p>
-      </div>
-      <div class="card">
-        <div class="label">03 &nbsp; Type theory</div>
-        <div class="tex">(A=B)\simeq(A\simeq B)</div>
-        <p class="note">Univalence. Two types that are equivalent are equal.</p>
-      </div>
-      <div class="card">
-        <div class="label">04 &nbsp; Sheaf theory</div>
-        <div class="tex">\ker L_{\mathcal F}=H^{0}(X;\mathcal F)</div>
-        <p class="note">The kernel of the sheaf Laplacian is the space of global sections: the answers that agree everywhere. Proved in Lean 4.</p>
-      </div>
-    </div>
-  </section>
 </main>
 
 <footer>
@@ -247,19 +161,5 @@
   <span>© 2026</span>
 </footer>
 
-<script src="https://cdn.jsdelivr.net/npm/katex@0.16.47/dist/katex.min.js"></script>
-<script>
-(function () {
-  // Typeset each formula. If one is wider than its card, shrink it to fit.
-  document.querySelectorAll(".tex").forEach(function (el) {
-    var src = el.textContent.trim();
-    try { katex.render(src, el, { displayMode: true, throwOnError: false, strict: "ignore" }); }
-    catch (e) { el.textContent = src; return; }
-    var k = el.querySelector(".katex");
-    var need = k ? k.getBoundingClientRect().width : 0, have = el.clientWidth;
-    if (need > have) el.style.fontSize = (parseFloat(getComputedStyle(el).fontSize) * have / need * 0.985) + "px";
-  });
-})();
-</script>
 </body>
 </html>
